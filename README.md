@@ -31,8 +31,11 @@ python manage.py test
 
 ```console
 heroku create minhainstancia
+# certifique-se de excluir a variável DATABASE_URL
 heroku config:push
-heroku config:set SECRET_KEY='python contrib/secret_gen.py'
+# rode o comando: python contrib/secret_gen.py
+# e copie o a KEY
+heroku config:set SECRET_KEY=SUA_KEY
 heroku config:set DEBUG=False
 git push heroku master --force
 ```
