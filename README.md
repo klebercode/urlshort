@@ -2,6 +2,11 @@
 
 Encurtador de URLs.
 
+Link: http://urlshortme.herokuapp.com/
+Admin: http://urlshortme.herokuapp.com/admin
+Login: demo
+Pass: urlshortme
+
 ## Como desenvolver?
 
 1. Clone o repositório
@@ -34,10 +39,8 @@ heroku create minhainstancia
 # certifique-se de excluir a variável DATABASE_URL
 heroku config:push
 # rode o comando: python contrib/secret_gen.py
-# e copie o a KEY
+# e copie a KEY
 heroku config:set SECRET_KEY=SUA_KEY
 heroku config:set DEBUG=False
 git push heroku master --force
 ```
-
-Lembrando que o Heroku trabalha com Postgres
