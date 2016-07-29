@@ -32,35 +32,34 @@
 
                 $('#url').keyup(function(e){
                     if(e.keyCode == 13) {
-                        $.ajax({
-                            type: "POST",
-                            url: "/makeshort/",
-                            data: {
-                                'url' : $('#url').val(),
-                                'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
-                            },
-                            success: returnSuccess,
-                            dataType: 'json'
-                        });
+                        if(isUrlValid($('#url').val())) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/makeshort/",
+                                data: {
+                                    'url' : $('#url').val(),
+                                    'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+                                },
+                                success: returnSuccess,
+                                dataType: 'json'
+                            });
+                        } else {
+                            $('#url').val("");
+                            $('#url-result').text("Por favor, insira uma URL válida.");
+                        };
                     };
                 });
             });
 
             function returnSuccess(data, textStatus, jqXHR) {
-                if(isUrlValid(data.url)) {
-                    if(data.url) {
-                        $('#url-result').text(data.url);
-                        $('#url-copy').attr('data-clipboard-text', data.url);
-                        $('#url-copy').removeClass('hidden');
-                        $('#url').val("");
-                    } else {
-                        $('#url-result').text("Por favor, insira uma URL.");
-                    }
-                } else {
+                if(data.url) {
+                    $('#url-result').text(data.url);
+                    $('#url-copy').attr('data-clipboard-text', data.url);
+                    $('#url-copy').removeClass('hidden');
                     $('#url').val("");
-                    $('#url-result').text("Por favor, insira uma URL válida.");
+                } else {
+                    $('#url-result').text("Por favor, insira uma URL.");
                 }
-
             };
 
             function copyToClipboard(element) {
