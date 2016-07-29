@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}URLShort{% endblock %}</title>
+        {% load staticfiles %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <style type="text/css" media="all">
+        .hidden { display: none; }
+    </style>
+
+    <body>
+        <div id="wrap" class="container">
+            <header>
+                <h1><a href="{% url 'home' %}">URLShort</a></h1>
+            </header>
+
+            <div id="content">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="{% static 'assets/js/clipboard.min.js' %}"></script>
+
+        <script type="text/javascript">
+            $(function() {
+                new Clipboard('.btn');
+
+                $('#url').keyup(function(e){
+                    if(e.keyCode == 13) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/makeshort/",
+                            data: {
+                                'url' : $('#url').val(),
+                                'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+                            },
+                            success: returnSuccess,
+                            dataType: 'json'
+                        });
+                    };
+                });
+            });
+
+            function returnSuccess(data, textStatus, jqXHR) {
+                if(isUrlValid(data.url)) {
+                    if(data.url) {
+                        $('#url-result').text(data.url);
+                        $('#url-copy').attr('data-clipboard-text', data.url);
+                        $('#url-copy').removeClass('hidden');
+                        $('#url').val("");
+                    } else {
+                        $('#url-result').text("Por favor, insira uma URL.");
+                    }
+                } else {
+                    $('#url').val("");
+                    $('#url-result').text("Por favor, insira uma URL válida.");
+                }
+
+            };
+
+            function copyToClipboard(element) {
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val($('#url-result').text()).select();
+                document.execCommand("copy");
+                $temp.remove();
+            };
+
+            function isUrlValid(url) {
+                return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url);
+            };
+        </script>
+    </body>
+</html>
