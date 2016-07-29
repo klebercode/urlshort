@@ -42,7 +42,7 @@ heroku create minhainstancia
 # certifique-se de excluir a variável DATABASE_URL
 heroku config:push
 # rode o comando: python contrib/secret_gen.py
-# e copie a KEY
+# e copie a SUA_KEY
 heroku config:set SECRET_KEY=SUA_KEY
 heroku config:set DEBUG=False
 git push heroku master --force
